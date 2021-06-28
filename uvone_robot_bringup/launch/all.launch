@@ -1,0 +1,7 @@
+<launch>
+
+  <include file="$(find uvone_robot_bringup)/launch/minimal.launch" />
+  <include file="$(find uvone_robot_bringup)/launch/3d_sensor.launch" />
+  <include file="$(find uvone_robot_bringup)/launch/lidar_sensor.launch" />
+
+</launch>

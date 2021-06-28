@@ -1,0 +1,31 @@
+<launch>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="use_sim_time" value="true"/>
+    <arg name="debug" value="false"/>
+    <arg name="world_name" value="$(find kobuki_gazebo)/worlds/empty.world"/>
+  </include>
+
+  <arg name="robot_name" value="uvone"/>
+  <param name="robot_description"
+        command="$(find xacro)/xacro '$(find uvone_robot_description)/urdf/model.urdf.xacro'"/>
+
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_$(arg robot_name)"
+        args="-x 0.0 -y 0.0 -z 0.5 -unpause -urdf -param robot_description -model $(arg robot_name)" respawn="false">
+  </node>
+
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="30.0"/>
+  </node>
+
+
+  <node pkg="nodelet" type="nodelet" name="mobile_base_nodelet_manager" args="manager"/>
+
+  <node pkg="nodelet" type="nodelet" name="cmd_vel_mux" args="load yocs_cmd_vel_mux/CmdVelMuxNodelet mobile_base_nodelet_manager">
+    <param name="yaml_cfg_file" value="$(find uvone_robot_bringup)/param/mux.yaml"/>
+    <remap from="cmd_vel_mux/output" to="mobile_base/commands/velocity"/>
+  </node>
+
+  <include file="$(find uvone_robot_bringup)/launch/scan_filter.launch" />
+
+</launch>

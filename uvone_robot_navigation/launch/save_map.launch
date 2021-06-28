@@ -1,0 +1,9 @@
+<launch>
+    <node name="save_map_node_1" pkg="map_server" type="map_saver" args="-f $(find uvone_robot_navigation)/maps/octomap_grid" output="screen">
+        <remap from="map" to="/rtabmap/octomap_grid" />
+    </node>
+
+    <node name="save_map_node_2" pkg="map_server" type="map_saver" args="-f $(find uvone_robot_navigation)/maps/map" output="screen">
+        <remap from="map" to="/map" />
+    </node>
+</launch>

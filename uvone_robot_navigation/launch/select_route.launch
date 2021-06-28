@@ -1,0 +1,8 @@
+<launch>
+    <node name="create_trace_node" pkg="uvone_robot_navigation" type="create_trace.py" output="screen">
+        <param name="yaml/path" value="$(find uvone_robot_navigation)/maps/" />
+        <param name="yaml/filename" value="octomap_grid.yaml" />
+        <param name="route/path" value="$(find uvone_robot_navigation)/paths/" />
+        <param name="route/filename" value="ruta.txt" />
+    </node>
+</launch>

@@ -1,0 +1,44 @@
+<launch>
+  <arg name="kobuki_publish_tf" default="true"/> <!-- Publish base_footprint - odom transforms (usually good thing to have for localisation) -->
+
+  <!-- ROBOT DESCRIPTION-->
+  <arg name="urdf_file" default="$(find xacro)/xacro '$(find uvone_robot_description)/urdf/model.urdf.xacro'"/>
+  <param name="robot_description" command="$(arg urdf_file)"/>
+  
+  <param name="robot/name" value="$(optenv ROBOT turtlebot)"/>
+  <param name="robot/type" value="turtlebot"/>
+  
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="5.0" />
+  </node>
+
+
+  <node pkg="nodelet" type="nodelet" name="mobile_base_nodelet_manager" args="manager"/>
+  <node pkg="nodelet" type="nodelet" name="mobile_base" args="load kobuki_node/KobukiNodelet mobile_base_nodelet_manager">
+    <rosparam file="$(find kobuki_node)/param/base.yaml" command="load"/>
+    <param name="publish_tf" value="$(arg kobuki_publish_tf)"/>
+    <remap from="mobile_base/odom" to="odom"/>
+    <remap from="mobile_base/joint_states" to="joint_states"/>
+  </node>
+
+   <!-- velocity commands multiplexer -->
+  <node pkg="nodelet" type="nodelet" name="cmd_vel_mux" args="load yocs_cmd_vel_mux/CmdVelMuxNodelet mobile_base_nodelet_manager">
+    <param name="yaml_cfg_file" value="$(find uvone_robot_bringup)/param/mux.yaml"/>
+
+    <param name="device_port" value="/dev/kobuki/" />
+
+    <remap from="mobile_base/odom" to="odom"/>
+    <!-- Don't do this - force applications to use a velocity mux for redirection  
+      <remap from="mobile_base/commands/velocity" to="cmd_vel"/> 
+    -->
+    <remap from="cmd_vel_mux/output" to="mobile_base/commands/velocity"/>
+    
+    <remap from="mobile_base/enable" to="enable"/>
+    <remap from="mobile_base/disable" to="disable"/>
+    <remap from="mobile_base/joint_states" to="joint_states"/>
+  </node>
+  
+  <node pkg="diagnostic_aggregator" type="aggregator_node" name="diagnostic_aggregator" >
+    <rosparam command="load" file="$(find kobuki_node)/param/diagnostics.yaml" />
+  </node>
+</launch>

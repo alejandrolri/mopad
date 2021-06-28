@@ -1,0 +1,14 @@
+<launch>
+
+
+  
+  <node pkg="laser_filters" type="scan_to_scan_filter_chain" name="laser_filter">
+
+    <rosparam command="load" file="$(find uvone_robot_bringup)/param/laser_config.yaml" />
+    <remap from="scan" to="/uvone/laser/scan" />
+    <remap from="scan_filtered" to="/uvone/laser/scan_filtered" />
+
+  </node>
+
+
+</launch>
