@@ -5,7 +5,7 @@
   <xacro:include filename="$(find uvone_robot_description)/urdf/include/rplidar.urdf.xacro" />
   <xacro:include filename="$(find uvone_robot_description)/urdf/include/astra.urdf.xacro" />
 
-  
+ 
 
   <!-- Base Kobuki -->
   <xacro:kobuki/>
@@ -44,8 +44,7 @@
   </link>
 
 
-
   <!-- Camara astra -->
-  <xacro:sensor_astra parent="base_link" posz="1.238"/>  <!-- Primer escalon: posz=0.718 --> <!-- Segundo escalon: posz=1.358 -->
+  <xacro:sensor_astra parent="base_link" posz="1.358"/>  <!-- Primer escalon: posz=0.718 --> <!-- Segundo escalon: posz=1.358 -->
 
 </robot>
