@@ -21,7 +21,7 @@
   
 <!-- RPlidar -->
   <joint name="rplidar_joint" type="fixed">
-    <origin rpy="0 0 -3.1415926536" xyz="0.110 0 0.108" />
+    <origin rpy="3.1415926536 0 3.1415926536" xyz="0.110 0.0 0.108" />
     <parent link="base_link"/>
     <child link="rplidar"/>
   </joint>
@@ -31,7 +31,7 @@
       <geometry>
         <mesh filename="package://uvone_robot_description/meshes/rplidar.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <origin rpy="-1.57 0 0" xyz="0 -0.07 0.04" />
+      <origin rpy="1.57 0 0" xyz="0 0.075 -0.04" />
       <material name="black">
         <color rgba="0.2 0.2 0.2 1" />
       </material>
@@ -39,24 +39,24 @@
   </link>
   <xacro:rplidar_sim/>  
 
- <!-- Camara astra  -->
-  <joint name="astra_joint" type="fixed">
-    <origin rpy="1.57 0 1.57" xyz="0.10 0 0.29" />
+ <!-- Camara astra (Esta parte no vale) -->
+   <!--<joint name="astra_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.10 0 0.29" />
     <parent link="base_link"/>
     <child link="astra"/>
   </joint>
 
-  <link name="astra">
+ <link name="astra">
     <visual>
       <geometry>
         <mesh filename="package://uvone_robot_description/meshes/astra.dae" scale="0.75 0.75 0.75"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0" />
+      <origin rpy="1.57 0 1.57" xyz="0 0 0" />
       <material name="black">
         <color rgba="0.2 0.2 0.2 1" />
       </material>
     </visual>
-  </link>
-  <xacro:sensor_astra parent="base_link" posz="0.3" /> 
+  </link> -->
+  <xacro:sensor_astra parent="base_link" posz="0.4" /> 
 
 </robot>
