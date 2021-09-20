@@ -6,7 +6,8 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 #include <fstream> // Para leer el archivo
-std::ifstream infile("/home/rafaelm/own_ws/src/uvone_robot/uvone_robot_navigation/paths/ruta.txt");
+
+std::ifstream infile("/home/mopad/catkin_ws/src/uvone_robot_navigation/paths/ruta.txt");
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 

@@ -11,10 +11,10 @@ origen = [0, 0, 0]
 grid_size = 0
 #path_yaml = '/home/rafaelm/Desktop/mapa_test.yaml'
 #path_yaml = '/home/rafaelm/own_ws/src/uvone_robot/uvone_robot_navigation/maps/octomap_grid.yaml'
-path_yaml = rospy.get_param('~yaml/path', '/home/rafaelm/own_ws/src/uvone_robot/uvone_robot_navigation/maps/')
-file_yaml = rospy.get_param('~yaml/filename', 'octomap_grid.yaml')
-route_path = rospy.get_param('~route/path', 'octomap_grid.yaml')
-route_filename = rospy.get_param('~route/filename', 'octomap_grid.yaml')
+path_yaml = rospy.get_param('~yaml/path', '/home/alejandro/catkin_ws/src/uvone_robot_navigation/maps/')
+file_yaml = rospy.get_param('~yaml/filename','map.yaml')
+route_path = rospy.get_param('~route/path','map.yaml')
+route_filename = rospy.get_param('~route/filename','map.yaml')
 f = open(route_path + route_filename, "w") # Archivo donde se guardaran las posiciones objetivo
 
 
@@ -102,7 +102,7 @@ if __name__ == '__main__':
         # Esperamos que el usuario presione entres para salir y escribir el archivo.
         while(1):
             k = cv2.waitKey(33)
-            if k==32:
+            if k==27:	#Esc
                 break
             else:
                 continue

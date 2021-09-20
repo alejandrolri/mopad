@@ -134,8 +134,8 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/uvone_robot_navigation_node.cpp)
-add_executable(simple_navigation_goals src/test.cpp)
-target_link_libraries(simple_navigation_goals ${catkin_LIBRARIES})
+#add_executable(simple_navigation_goals src/test.cpp)
+#target_link_libraries(simple_navigation_goals ${catkin_LIBRARIES})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -210,3 +210,5 @@ catkin_install_python(PROGRAMS scripts/create_trace.py
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+
