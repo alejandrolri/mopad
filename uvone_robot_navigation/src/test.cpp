@@ -6,29 +6,43 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 #include <fstream> // Para leer el archivo
+#include <iostream>
 
-std::ifstream infile("/home/mopad/catkin_ws/src/uvone_robot_navigation/paths/ruta.txt");
+//#include "asr_flir_ptu_driver/State.h"
+//#include <sensor_msgs/JointState.h>
+
+using namespace std;
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
+
 
 int main(int argc, char** argv){
   double x, y, theta;
   ros::init(argc, argv, "simple_navigation_goals");
 
+
   tf2::Quaternion myQ;
+
 
   //tell the action client that we want to spin a thread by default
   MoveBaseClient ac("move_base", true);
+
 
   //wait for the action server to come up
   while(!ac.waitForServer(ros::Duration(5.0))){
     ROS_INFO("Waiting for the move_base action server to come up");
   }
 
+//..............
+  ifstream myfile;
+  myfile.open("/home/alejandro/catkin_ws/src/uvone_robot_navigation/paths/ruta.txt");
+ if (myfile.is_open())
+  { 
+    cout << "abierto" <<"\n";
+    while ( myfile >> x >> y >> theta)
+    {
+    cout << x <<"\t" << y <<"\t" << theta << endl;
 
-  while (infile >> x >> y >> theta)
-  {
-    
     move_base_msgs::MoveBaseGoal goal;
     goal.target_pose.header.frame_id = "map";
     goal.target_pose.header.stamp = ros::Time::now();
@@ -39,7 +53,7 @@ int main(int argc, char** argv){
     goal.target_pose.pose.position.y = y;
     tf2::convert(myQ, goal.target_pose.pose.orientation);
 
-    ROS_INFO("Moviendose a la siguiente posicion.");
+    ROS_INFO("Moviendose a la siguiente posicion");
     ac.sendGoal(goal);
 
     ac.waitForResult();
@@ -47,10 +61,19 @@ int main(int argc, char** argv){
     ros::Duration(0.1).sleep();
 
     if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-      ROS_INFO("Ha llegado correctamente");
+       ROS_INFO("Ha llegado correctamente");
     else
-      ROS_INFO("The base failed for some reason");
+      ROS_INFO("Ha habido un fallo");
+    }
+
+
+
+    myfile.close();
   }
+
+  else cout << "Unable to open file"; 
+
+//.................
 
   return 0;
 }
