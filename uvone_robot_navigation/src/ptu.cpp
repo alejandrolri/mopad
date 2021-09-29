@@ -2,22 +2,8 @@
 #include "asr_flir_ptu_driver/State.h"
 #include <sensor_msgs/JointState.h>
 
-int main()    {
-		sensor_msgs::JointState joint_state = createJointCommand(panSlider->GetValue(), tiltSlider->GetValue(), 0, 0);
-        asr_flir_ptu_driver::State msg;
-        msg.state = joint_state;
-        seq_num++;
-        msg.seq_num = seq_num;
-        jointStatePublisher.publish(msg);
-	
-	ros::spinOnce();
-	if (!ros::ok())
-	{
-		Close();
-	}
-}
-
-sensor_msgs::JointState PTU_GUI::createJointCommand(double pan, double tilt, double panSpeed, double tiltSpeed) {
+sensor_msgs::JointState createJointCommand(double pan, double tilt, double panSpeed, double tiltSpeed)
+{
 	sensor_msgs::JointState joint_state;
 	joint_state.header.stamp = ros::Time::now();
 	joint_state.name.push_back("pan");
@@ -29,3 +15,23 @@ sensor_msgs::JointState PTU_GUI::createJointCommand(double pan, double tilt, dou
 	return joint_state;
 }
 
+
+int main(int argc, char **argv)
+{
+	ros::init(argc, argv, "my_ptu");
+	ros::NodeHandle nh;
+	ros::Publisher state_pub = nh.advertise<asr_flir_ptu_driver::State>("/asr_flir_ptu_driver/state_cmd", 1);	
+
+	double pan = 10;
+	double tilt = 10;
+
+	for(int i=0;i<2;i++)
+	{
+	asr_flir_ptu_driver::State movement_goal;
+	sensor_msgs::JointState joint_state = createJointCommand(pan, tilt, 0, 0);
+
+	movement_goal.state = joint_state;
+	state_pub.publish(movement_goal);
+        ros::Duration(5).sleep();
+	}
+}

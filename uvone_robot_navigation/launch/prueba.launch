@@ -1,4 +1,4 @@
 <launch>
-    <node name="test" pkg="uvone_robot_navigation" type="test" output="screen">
+    <node name="simple_navigation_goals" pkg="uvone_robot_navigation" type="uvone_robot_navigation" output="screen">
     </node>
 </launch>

@@ -59,7 +59,7 @@ def on_click(event, x, y, p1, p2):
 
 
         cv2.arrowedLine(img, init_point, final_point, (100, 200, 0), 5)
-        cv2.imshow("image", img)
+        cv2.imshow(name, img)
 
 
 
@@ -94,9 +94,10 @@ if __name__ == '__main__':
         height, width, channels = img.shape
 
         # Mostramos el mapa y anadimos el callback.
-        cv2.namedWindow('image')
-        cv2.setMouseCallback('image', on_click)
-        cv2.imshow("image", img)
+	name = "Seleccione los puntos. Para salir pulse ESC"
+        cv2.namedWindow(name)
+        cv2.setMouseCallback(name, on_click)
+        cv2.imshow(name, img)
 
 
         # Esperamos que el usuario presione entres para salir y escribir el archivo.
