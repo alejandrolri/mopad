@@ -1,0 +1,8 @@
+<launch>
+    <node name="create_trace_node" pkg="mopad_navigation" type="create_trace.py" output="screen">
+        <param name="yaml/path" value="$(find mopad_navigation)/maps/" />
+        <param name="yaml/filename" value="map.yaml" />
+        <param name="route/path" value="$(find mopad_navigation)/paths/" />
+        <param name="route/filename" value="ruta.txt" />
+    </node>
+</launch>

@@ -1,0 +1,6 @@
+<launch>
+
+  <include file="$(find mopad_bringup)/launch/all.launch" />
+  <include file="$(find asr_flir_ptu_driver)/launch/ptu_left.launch" />
+
+</launch>
