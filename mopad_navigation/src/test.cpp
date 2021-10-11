@@ -90,12 +90,16 @@ int main(int argc, char** argv){
 
     if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
-       ROS_INFO("Ha llegado correctamente");
-       ptu(-25,-10,state_pub);
+      	ROS_INFO("Ha llegado correctamente");
+	ptu(-80,0,state_pub);
+	ptu(-80,24,state_pub);
+	ros::Duration(10).sleep();
        //BLK
-       ptu(25,-10,state_pub);
+       	ptu(80,24,state_pub);
+	ros::Duration(10).sleep();
        //BLK
-       ptu(0,0,state_pub);
+	ptu(0,24,state_pub);
+       	ptu(0,0,state_pub);
     }
     else
       ROS_INFO("Ha habido un fallo");
