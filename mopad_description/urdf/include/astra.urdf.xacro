@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="rplidar_sim" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="astra_sensor" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <xacro:macro name="sim_3dsensor">
     <gazebo reference="camera_rgb_frame">  
@@ -53,12 +53,12 @@
         <child link="camera_rgb_frame" />
         </joint>
 	<!-- .........................................................-->
-        <link name="camera_rgb_frame">
-    <visual>
+        <link name="camera_rgb_frame"> 
+ <visual>
       <geometry>
-        <mesh filename="package://mopad_description/meshes/astra.dae" scale="0.75 0.75 0.75"/>
+        <mesh filename="package://uvone_robot_description/meshes/astra.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <origin rpy="1.57 0 1.57" xyz="0 0 0" />
+      <origin rpy="1.62 0 1.57" xyz="0.05 0.025 0.039" />
       <material name="black">
         <color rgba="0.2 0.2 0.2 1" />
       </material>
@@ -74,14 +74,12 @@
         <link name="camera_rgb_optical_frame"/>
 
 
-
         <joint name="camera_depth_joint" type="fixed">
         <origin xyz="0 -0.016 0" rpy="0 0 0" /><!-- ha cambiado !! posy-->
         <parent link="camera_rgb_frame" />
         <child link="camera_depth_frame" />
         </joint>
         <link name="camera_depth_frame"/>
-
 
 
         <joint name="camera_depth_optical_joint" type="fixed">
@@ -91,31 +89,9 @@
         </joint>
         <link name="camera_depth_optical_frame"/>
 
-	<!-- .........................................................-->
 
-	<joint name="camera_joint" type="fixed">
-     	 <origin xyz="0 0 0" rpy="0 0 0"/>
-      	<parent link="camera_rgb_frame"/>
-      	<child link="camera_link"/>
-    	</joint>
-    	<link name="camera_link">
-	   <visual>
-      		<geometry>
-        	<mesh filename="package://mopad_description/meshes/astra.dae" 			scale="0.75 0.75 0.75"/>
-      		</geometry>
-      		<origin rpy="1.57 0 1.57" xyz="0 0 0" />
-      		<material name="black">
-      		  <color rgba="0.2 0.2 0.2 1" />
-      		</material>
-           </visual>
- 	 </link> 
-	<!-- .........................................................-->
         <!-- RGBD sensor for simulation, same as Kinect -->
         <xacro:sim_3dsensor/>
 
   </xacro:macro>
-
-
-
-
 </robot>
