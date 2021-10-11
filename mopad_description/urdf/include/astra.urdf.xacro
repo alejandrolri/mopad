@@ -53,18 +53,18 @@
         <child link="camera_rgb_frame" />
         </joint>
 	<!-- .........................................................-->
-        <link name="camera_rgb_frame"> 
- <visual>
-      <geometry>
-        <mesh filename="package://uvone_robot_description/meshes/astra.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <origin rpy="1.62 0 1.57" xyz="0.05 0.025 0.039" />
-      <material name="black">
-        <color rgba="0.2 0.2 0.2 1" />
-      </material>
-    </visual>
+        <link name="camera_rgb_frame" > 
+ 	<visual>
+      	<geometry>
+      		  <mesh filename="package://mopad_description/meshes/astra.stl" scale="0.001 0.001 0.001"/>
+      	</geometry>
+      	<origin rpy="1.62 0 1.57" xyz="0.05 0.025 0.039" />
+      	<material name="black">
+        	<color rgba="0.2 0.2 0.2 1" />
+      	</material>
+   	 </visual>
   </link> 
-	<!-- .........................................................-->
+
 
         <joint name="camera_rgb_optical_joint" type="fixed">
         <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />

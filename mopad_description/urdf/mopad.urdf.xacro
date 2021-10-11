@@ -9,9 +9,9 @@
 
   <xacro:include filename="$(find turtlebot_description)/urdf/turtlebot_common_library.urdf.xacro" />
   <xacro:include filename="$(find kobuki_description)/urdf/kobuki.urdf.xacro" />
-  <xacro:include filename="$(find uvone_robot_description)/urdf/include/hexagons.urdf.xacro"/>
-  <xacro:include filename="$(find uvone_robot_description)/urdf/include/rplidar.urdf.xacro" /> 
-  <xacro:include filename="$(find uvone_robot_description)/urdf/include/astra.urdf.xacro" />  
+  <xacro:include filename="$(find mopad_description)/urdf/include/hexagons.urdf.xacro"/>
+  <xacro:include filename="$(find mopad_description)/urdf/include/rplidar.urdf.xacro" /> 
+  <xacro:include filename="$(find mopad_description)/urdf/include/astra.urdf.xacro" />  
 
 
   
@@ -30,7 +30,7 @@
   <link name="rplidar">
     <visual>
       <geometry>
-        <mesh filename="package://uvone_robot_description/meshes/rplidar.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://mopad_description/meshes/rplidar.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <origin rpy="1.57 0 0" xyz="0 0.075 -0.04" />
       <material name="black">

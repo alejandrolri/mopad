@@ -176,7 +176,7 @@
      <xacro:stack_3d_sensor_pole parent="${parent}" number="0" x_loc= "0.11" y_loc= "0.1" z_loc="0.235"/>
     <xacro:stack_3d_sensor_pole parent="${parent}" number="1" x_loc= "0.11" y_loc="-0.1" z_loc="0.235"/> 
 
-<!-- <joint name="plate_camera_joint" type="fixed">
+ <joint name="plate_camera_joint" type="fixed">
       <origin xyz="0.122 0.0 0.27" rpy="0 0 1.57"/>
       <parent link="${parent}"/>
       <child link="plate_camera_link"/>
@@ -187,8 +187,11 @@
         <geometry>
          <mesh filename="package://mopad_description/meshes/pieza.stl" scale="0.00102 0.0012 0.0012"/>
         </geometry>
+	<material name="black">
+        	<color rgba="0.2 0.2 0.2 1" />
+      	</material>
       </visual>  
-    </link> -->
+    </link> 
 
 
 
