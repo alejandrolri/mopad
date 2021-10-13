@@ -1,4 +1,4 @@
 <launch>
-    <node name="navigation_goals" pkg="mopad_navigation" type="mopad_navigation" output="screen">
+    <node name="navigation_goals" pkg="mopad_navigation" type="navigation" output="screen">
     </node>
 </launch>

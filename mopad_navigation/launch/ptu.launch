@@ -1,0 +1,4 @@
+<launch>
+    <node name="my_ptu" pkg="mopad_navigation" type="ptu" output="screen">
+    </node>
+</launch>

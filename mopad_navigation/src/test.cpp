@@ -36,7 +36,7 @@ void ptu(double pan, double tilt, ros::Publisher state_pub)
 
 	movement_goal.state = joint_state;
 	state_pub.publish(movement_goal);
-        ros::Duration(10).sleep();
+        ros::Duration(3).sleep();
 	}
 }
 //..................................................................
@@ -98,7 +98,7 @@ int main(int argc, char** argv){
        	ptu(80,24,state_pub);
 	ros::Duration(10).sleep();
        //BLK
-	ptu(0,24,state_pub);
+	ptu(80,0,state_pub);
        	ptu(0,0,state_pub);
     }
     else

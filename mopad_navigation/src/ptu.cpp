@@ -40,6 +40,6 @@ int main(int argc, char **argv)
        	ptu(80,24,state_pub);
 	ros::Duration(10).sleep();
        //BLK
-	ptu(0,24,state_pub);
+	ptu(80,0,state_pub);
        	ptu(0,0,state_pub);	
 }
