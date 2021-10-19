@@ -100,7 +100,7 @@ if __name__ == '__main__':
         cv2.imshow(name, img)
 
 
-        # Esperamos que el usuario presione entres para salir y escribir el archivo.
+        # Esperamos que el usuario presione ESC para salir y escribir el archivo.
         while(1):
             k = cv2.waitKey(33)
             if k==27:	#Esc

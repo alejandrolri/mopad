@@ -57,7 +57,7 @@
       <param name="Vis/MaxDepth"                  type="string" value="4.0"/>
       <param name="Grid/RangeMax"                  type="string" value="4.0"/>  <!-- Modificado de Grid/DepthMax a Grid/RangeMax -->
       <param name="Reg/Strategy"                 type="string" value="0"/>      <!-- MODIFICADO DE 2 A 0 / Loop closure transformation: 0=Visual, 1=ICP, 2=Visual+ICP -->
-      <param name="Icp/CorrespondenceRatio"      type="string" value="0.3"/>	<!-- Modificado de 0.3 a 0.2 -->
+      <param name="Icp/CorrespondenceRatio"      type="string" value="0.3"/>	
       <param name="Vis/MinInliers"               type="string" value="30"/>      <!-- 3D visual words minimum inliers to accept loop closure -->
       <param name="Vis/InlierDistance"           type="string" value="0.1"/>    <!-- 3D visual words correspondence distance -->
       <param name="RGBD/AngularUpdate"           type="string" value="0"/>    <!-- Update map only if the robot is moving -->
