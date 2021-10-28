@@ -7,7 +7,7 @@
   <arg name="simulation"        default="false"/>
   <arg name="sw_registered"     default="false"/>
   <arg     if="$(arg localization)" name="args"  default=""/>
-  <arg unless="$(arg localization)" name="args"  default="--delete_db_on_start"/>
+  <arg unless="$(arg localization)" name="args"  default=""/>
 
   <arg     if="$(arg simulation)" name="rgb_topic"   default="/camera/rgb/image_raw"/>
   <arg unless="$(arg simulation)" name="rgb_topic"   default="/camera/rgb/image_rect_color"/>
