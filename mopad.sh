@@ -8,7 +8,7 @@ echo "¿Va a realizar una nueva sesión? "
 select sn in "Si" "No"; do
     		case $sn in
         		Si ) 	arg=args:=\"--delete_db_on_start\"; var=0; break;;
-        		No ) 	echo "¿Elegir mapa o por defecto? "
+        		No ) 	echo "¿Elegir mapa(.db) o por defecto? "
 				select aux in "Mapa" "Defecto"; do
     					case $aux in
 				"Mapa") 	echo "Introduzca la ruta del archivo:"; read mapa;
@@ -75,7 +75,7 @@ select fav in "${scripts[@]}"; do
 	"Salir")
 		if [ $var = 0 ];
 		then 
-		    echo "¿Quiere guardar el mapa fuera de la ubicación por defecto? "
+		    echo "¿Quiere guardar el mapa(.db) fuera de la ubicación por defecto? "
 		    select yn in "Si" "No"; do
     			case $yn in
         			Si ) 	echo "Introduzca la ruta:"; read ruta;
