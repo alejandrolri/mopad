@@ -1,4 +1,0 @@
-<launch>
-    <node name="simple_navigation_goals" pkg="uvone_robot_navigation" type="uvone_robot_navigation" output="screen">
-    </node>
-</launch>
