@@ -1,9 +1,6 @@
 # mopad
 Incluye los paquetes necesarios para la puesta en funcionamiento del mopad 2
-# Robot de desinfección para COVID-19
-_Proyecto impulsado por ETSII-CR (Escuela Superior de Ingeniería Industrial - Ciudad Real)_
 
-Se trata de un robot contruido sobre la base _kobuki_ y montados unos tubos _UVC_ que desinfectarán las áreas proximas.
 
 Se usará ROS-MELODIC para la realización de este proyecto, aunque se ha tenido que adaptar los paquetes de kobuki, ya que no están incluidos en apt.
 
