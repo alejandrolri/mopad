@@ -2,52 +2,72 @@
 Incluye los paquetes necesarios para la puesta en funcionamiento del mopad 2
 
 
-Se usará ROS-MELODIC para la realización de este proyecto, aunque se ha tenido que adaptar los paquetes de kobuki, ya que no están incluidos en apt.
+Se usará ROS Melodic para la realización de este proyecto.
 
-## Comenzando
+
+# Instalación ROS Melodic
+Para instalar los repositorios de ROS:
+```
+$ sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+$ sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80 --recv-key' C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+$ sudo apt update
+$ sudo apt install ros-melodic-desktop-full
+```
+Para inicializar las variables de entorno automáticamente:
+```
+$ echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+$ source ~/.bashrc
+```
+Instalar paquetes básicos de ROS:
+```
+$ sudo apt install python-rosdep python-rosinstall build-essential python-rosinstall-generator python-wstool
+$ sudo rosdep init
+$ rosdep update
+```
+
+Crear el workspace:
+```
+$ mkdir -p ~/catkin_ws/src
+$ cd catkin_ws/
+$ catkin_make
+```
 
 ### Prerequisitos
 Para comenzar es necesario instalar los paquetes necesarios para utilizar la kobuki (base movil) y poder aportar movilidad al robot.
 
-Es tan sencillo como crear un _workspace_ nuevo:
+Descargar todos los paquetes necesarios en la carpeta _src_:
 ```
-$ mkdir -p ~/kobuki_ws/src/
-$ cd ~/kobuki_ws
-$ catkin_make
-```
-
-Ahora descargamos todos los paquetes necesarios en la carpeta _src_:
-```
-$ cd ~/kobuki_ws/src/
+$ cd ~/catkin_ws/src/
 $ git clone -b melodic https://github.com/yujinrobot/kobuki_desktop
 $ git clone -b melodic https://github.com/yujinrobot/kobuki
 $ git clone -b melodic https://github.com/yujinrobot/kobuki_msgs
 $ git clone https://github.com/yujinrobot/yujin_ocs
 $ git clone -b melodic https://github.com/yujinrobot/kobuki_core
 $ git clone https://github.com/yujinrobot/yocs_msgs
+$ git clone https://github.com/orbbec/ros_astra_camera
+$ git clone -b melodic https://github.com/turtlebot/turtlebot.git
+$ git clone https://github.com/Slamtec/rplidar_ros.git
 ```
 
-Ahora instalamos los paquetes necesarios:
+Instalar los paquetes necesarios:
 ```
-$ sudo apt install ros-melodic-ecl-* libftdi-dev libusb-dev ros-melodic-ar-track-alvar ros-melodic-navigation pyqt5-dev-tools ros-melodic-laser-filters
+$ sudo apt install ros-melodic-ecl-* libftdi-dev libusb-dev ros-melodic-ar-track-alvar ros-melodic-navigation pyqt5-dev-tools ros-melodic-laser-filters ros-melodic-rgbd-launch ros-melodic-libuvc ros-melodic-libuvc-camera ros-melodic-libuvc-ros
 ```
 
-Comprobamos que es capaz de compilar los paquetes de kobuki:
+Comprobar que es capaz de compilar los paquetes de kobuki:
 ```
-$ cd ~/kobuki_ws/
+$ cd ~/catkin_ws/
 $ catkin_make
 ```
 
-Añadimos el workspace para que ROS sea capaz de encontrarlos, al _.bashrc_:
+Añadir el workspace para que ROS sea capaz de encontrarlos, al _.bashrc_:
 ```
-$ source ~/kobuki_ws/devel/setup.bash
+$ source ~/catkin_ws/devel/setup.bash
 ```
 
 ### Instalacion
-Asumiendo que los prerequisitos se cumplen, comenzamos a instalar este paquete. Se ha creado otro workspace por cuestion de orden, pero puede descargarse en el primer _workspace_ creado.
+Para instalar los paquetes del MoPAD 2 y su ejecutable:
 ```
-$ mkdir -p ~/uvone_ws/src
-$ catkin_make
-$ cd ~/uvone_ws/src/
+cd ~/catkin_ws/src/
 $ git clone git@github.com:alejandrolri/mopad.git
 ```
