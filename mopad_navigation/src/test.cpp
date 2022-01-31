@@ -11,10 +11,11 @@
 #include "asr_flir_ptu_driver/State.h"
 #include <sensor_msgs/JointState.h>
 
+
+
 using namespace std;
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
-//.......................................................................
 sensor_msgs::JointState createJointCommand(double pan, double tilt, double panSpeed, double tiltSpeed)
 {
 	sensor_msgs::JointState joint_state;
@@ -39,15 +40,23 @@ void ptu(double pan, double tilt, ros::Publisher state_pub)
         ros::Duration(3).sleep();
 	}
 }
-//..................................................................
+
+void BLK()
+{
+	system("ssh mopad@10.42.0.1 \"cd blk/adquisitionOnlyPointCloud && export DISPLAY=:0.0 && ./DownloadPC low\"");
+	system("pscp -pw mopad -r mopad@10.42.0.1:/home/mopad/blk/adquisitionOnlyPointCloud/data /home/mopad/Escritorio");
+	system("ssh mopad@10.42.0.1 rm /home/mopad/blk/adquisitionOnlyPointCloud/data/*");
+}
+
 
 int main(int argc, char** argv){
+	
   double x, y, theta;
   ros::init(argc, argv, "navigation_goals");
-//..................................................
+
   ros::NodeHandle nh;
   ros::Publisher state_pub = nh.advertise<asr_flir_ptu_driver::State>("/asr_flir_ptu_driver/state_cmd", 1);	
-//..................................................
+
 
   tf2::Quaternion myQ;
 
@@ -57,16 +66,15 @@ int main(int argc, char** argv){
 
 
   //wait for the action server to come up
+
   while(!ac.waitForServer(ros::Duration(5.0))){
     ROS_INFO("Waiting for the move_base action server to come up");
   }
 
-//..............
   ifstream myfile;
-  myfile.open("/home/alejandro/catkin_ws/src/mopad_navigation/paths/ruta.txt");
+  myfile.open("/home/mopad/catkin_ws/src/mopad_navigation/paths/ruta.txt");
  if (myfile.is_open())
   { 
-    cout << "abierto" <<"\n";
     while ( myfile >> x >> y >> theta)
     {
     cout << x <<"\t" << y <<"\t" << theta << endl;
@@ -91,15 +99,22 @@ int main(int argc, char** argv){
     if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
       	ROS_INFO("Ha llegado correctamente");
-	ptu(-80,0,state_pub);
+//....................................................
+ 	ros::Duration(30).sleep();
+	BLK();
+	
+	/*ptu(-80,0,state_pub);
 	ptu(-80,24,state_pub);
-	ros::Duration(10).sleep();
-       //BLK
+	ros::Duration(5).sleep();
+       
        	ptu(80,24,state_pub);
-	ros::Duration(10).sleep();
-       //BLK
+	ros::Duration(5).sleep();
+        BLK
 	ptu(80,0,state_pub);
        	ptu(0,0,state_pub);
+*/
+
+//...................................................
     }
     else
       ROS_INFO("Ha habido un fallo");
@@ -112,7 +127,6 @@ int main(int argc, char** argv){
 
   else cout << "Unable to open file"; 
 
-//.................
 
   return 0;
 }
