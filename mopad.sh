@@ -1,9 +1,12 @@
 #!/bin/bash
+sudo /etc/init.d/chrony stop
+sudo ntpdate 10.42.0.1
+sudo /etc/init.d/chrony start
 #ssh -t mopad@10.42.0.1 "sudo chmod 666 /dev/ttyUSB0"
-#x-terminal-emulator -geometry 60x15+50+50 -e roscore
-#x-terminal-emulator -geometry 60x15+50+50 -e ssh mopad@10.42.0.1 roslaunch mopad_bringup all.launch		#Launch de inicialización robot
+x-terminal-emulator -geometry 60x15+50+50 -e roscore
+x-terminal-emulator -geometry 60x15+50+50 -e ssh mopad@10.42.0.1 roslaunch mopad_bringup all.launch		#Launch de inicialización robot
 #x-terminal-emulator -geometry 60x15+50+50 -e ssh mopad@10.42.0.1 roslaunch asr_flir_ptu_driver ptu_left.launch 	#Launch de configuración de PTU
-#sleep 5.0
+
 echo "¿Va a realizar una nueva sesión? "
 select sn in "Si" "No"; do
     		case $sn in
@@ -80,7 +83,7 @@ select fav in "${scripts[@]}"; do
     			case $yn in
         			Si ) 	echo "Introduzca la ruta:"; read ruta;
 					echo "Introduzca el nombre sin extensión:"; read nombre;
-					cp /home/alejandro/.ros/rtabmap.db $ruta/$nombre.db
+					cp /home/mopad/.ros/rtabmap.db $ruta/$nombre.db
 				     	break;;
         			No ) 	break;;
     			esac
