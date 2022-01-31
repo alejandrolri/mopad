@@ -47,11 +47,12 @@ $ git clone https://github.com/yujinrobot/yocs_msgs
 $ git clone https://github.com/orbbec/ros_astra_camera
 $ git clone -b melodic https://github.com/turtlebot/turtlebot.git
 $ git clone https://github.com/Slamtec/rplidar_ros.git
+$ git clone https://github.com/asr-ros/asr_flir_ptu_driver.git
 ```
 
 Instalar los paquetes necesarios:
 ```
-$ sudo apt install ros-melodic-ecl-* libftdi-dev libusb-dev ros-melodic-ar-track-alvar ros-melodic-navigation pyqt5-dev-tools ros-melodic-laser-filters ros-melodic-rgbd-launch ros-melodic-libuvc ros-melodic-libuvc-camera ros-melodic-libuvc-ros
+$ sudo apt install ros-melodic-ecl-* libftdi-dev libusb-dev ros-melodic-ar-track-alvar ros-melodic-navigation pyqt5-dev-tools ros-melodic-laser-filters ros-melodic-rgbd-launch ros-melodic-libuvc ros-melodic-libuvc-camera ros-melodic-libuvc-ros ros-melodic-rtabmap-ros
 ```
 
 Comprobar que es capaz de compilar los paquetes de kobuki:
