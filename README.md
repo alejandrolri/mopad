@@ -32,7 +32,7 @@ $ cd catkin_ws/
 $ catkin_make
 ```
 
-### Prerequisitos
+### Prerrequisitos
 Para comenzar es necesario instalar los paquetes necesarios para utilizar la kobuki (base movil) y poder aportar movilidad al robot.
 
 Descargar todos los paquetes necesarios en la carpeta _src_:
