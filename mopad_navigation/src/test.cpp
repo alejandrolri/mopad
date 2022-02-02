@@ -31,7 +31,7 @@ sensor_msgs::JointState createJointCommand(double pan, double tilt, double panSp
 }
 
 void ptu(double pan, double tilt, ros::Publisher state_pub)
-{	for(int i=0;i<2;i++) //Manera de que envíe solo un mensaje
+{	for(int i=0;i<2;i++) //Manera de que envíe solo un mensaje  ros::spinOnce();
 	{
 	asr_flir_ptu_driver::State movement_goal;
 	sensor_msgs::JointState joint_state = createJointCommand(pan, tilt, 0, 0);
@@ -44,12 +44,14 @@ void ptu(double pan, double tilt, ros::Publisher state_pub)
 
 void BLK(bool mode,string density,string emissivity_mode,int position)
 {
-	/* system("ssh mopad@10.42.0.1 \"cd blk/adquisitionOnlyPointCloud && export DISPLAY=:0.0 && ./DownloadPC low\"");
+	 system("ssh mopad@10.42.0.1 \"cd blk/adquisitionOnlyPointCloud && export DISPLAY=:0.0 && ./DownloadPC low\"");
 	system("pscp -pw mopad -r mopad@10.42.0.1:/home/mopad/blk/adquisitionOnlyPointCloud/data /home/mopad/Escritorio");
 	system("ssh mopad@10.42.0.1 rm /home/mopad/blk/adquisitionOnlyPointCloud/data/*");
-*/
-	string route, emissivity;
+
+	/*string route, emissivity,pos;
+	pos=to_string(position);
         
+        cout<< position << endl;
 	if (mode==false) //OnlyPointCloud
 		route = "adquisitionOnlyPointCloud/DownloadPC";
 	else{		//PCandIR
@@ -61,11 +63,12 @@ void BLK(bool mode,string density,string emissivity_mode,int position)
 	int n = param.length();
 	char command[n+1];
 	strcpy(command, param.c_str()); //system solo acepta char
-
+	
+	
 	system(command);
 	system("cp -r /home/mopad/data /home/mopad/Escritorio"); ///media/windows/Users/mopad/Desktop  
 	system("cp /home/mopad/catkin_ws/src/mopad_navigation/paths/ruta.txt /home/mopad/Escritorio/data"); 	
-	system("rm /home/mopad/data/*");
+	system("rm /home/mopad/data/*");*/
 	}
 
 
@@ -112,7 +115,7 @@ int main(int argc, char** argv){
     goal.target_pose.header.stamp = ros::Time::now();
 
     myQ.setRPY(0, 0, theta);
-
+     
     goal.target_pose.pose.position.x = x;
     goal.target_pose.pose.position.y = y;
     tf2::convert(myQ, goal.target_pose.pose.orientation);
