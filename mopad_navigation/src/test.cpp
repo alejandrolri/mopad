@@ -16,6 +16,7 @@
 using namespace std;
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
+
 sensor_msgs::JointState createJointCommand(double pan, double tilt, double panSpeed, double tiltSpeed)
 {
 	sensor_msgs::JointState joint_state;
@@ -41,22 +42,49 @@ void ptu(double pan, double tilt, ros::Publisher state_pub)
 	}
 }
 
-void BLK()
+void BLK(bool mode,string density,string emissivity_mode,int position)
 {
-	system("ssh mopad@10.42.0.1 \"cd blk/adquisitionOnlyPointCloud && export DISPLAY=:0.0 && ./DownloadPC low\"");
+	/* system("ssh mopad@10.42.0.1 \"cd blk/adquisitionOnlyPointCloud && export DISPLAY=:0.0 && ./DownloadPC low\"");
 	system("pscp -pw mopad -r mopad@10.42.0.1:/home/mopad/blk/adquisitionOnlyPointCloud/data /home/mopad/Escritorio");
 	system("ssh mopad@10.42.0.1 rm /home/mopad/blk/adquisitionOnlyPointCloud/data/*");
-}
+*/
+	string route, emissivity;
+        
+	if (mode==false) //OnlyPointCloud
+		route = "adquisitionOnlyPointCloud/DownloadPC";
+	else{		//PCandIR
+		route = "adquisitionPCAndIR/DownloadPCAndIR";
+		emissivity=emissivity_mode;
+	}	
+
+	string param = "cd ~ && export DISPLAY=:0.0 && ./blk/"+route+" "+density+" "+emissivity;
+	int n = param.length();
+	char command[n+1];
+	strcpy(command, param.c_str()); //system solo acepta char
+
+	system(command);
+	system("cp -r /home/mopad/data /home/mopad/Escritorio"); ///media/windows/Users/mopad/Desktop  
+	system("cp /home/mopad/catkin_ws/src/mopad_navigation/paths/ruta.txt /home/mopad/Escritorio/data"); 	
+	system("rm /home/mopad/data/*");
+	}
 
 
 int main(int argc, char** argv){
 	
   double x, y, theta;
-  ros::init(argc, argv, "navigation_goals");
+  bool scan_mode;
+  string density_mode, emissivity_mode;
+  int position=0;
 
-  ros::NodeHandle nh;
+  ros::init(argc, argv, "navigation_goals");
+  ros::NodeHandle nh("~"); 
   ros::Publisher state_pub = nh.advertise<asr_flir_ptu_driver::State>("/asr_flir_ptu_driver/state_cmd", 1);	
 
+//Obtener los parámetros para el escaneado
+  nh.getParam("/scan_mode", scan_mode);
+  nh.getParam("/density_mode", density_mode);
+  nh.getParam("/emissivity_mode", emissivity_mode);
+ 
 
   tf2::Quaternion myQ;
 
@@ -73,7 +101,7 @@ int main(int argc, char** argv){
 
   ifstream myfile;
   myfile.open("/home/mopad/catkin_ws/src/mopad_navigation/paths/ruta.txt");
- if (myfile.is_open())
+  if (myfile.is_open())
   { 
     while ( myfile >> x >> y >> theta)
     {
@@ -99,16 +127,14 @@ int main(int argc, char** argv){
     if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
       	ROS_INFO("Ha llegado correctamente");
-//....................................................
- 	ros::Duration(30).sleep();
-	BLK();
-	
+	position++;
+	BLK(scan_mode,density_mode,emissivity_mode,position);
 	/*ptu(-80,0,state_pub);
 	ptu(-80,24,state_pub);
-	ros::Duration(5).sleep();
+	
        
        	ptu(80,24,state_pub);
-	ros::Duration(5).sleep();
+	
         BLK
 	ptu(80,0,state_pub);
        	ptu(0,0,state_pub);
@@ -118,6 +144,7 @@ int main(int argc, char** argv){
     }
     else
       ROS_INFO("Ha habido un fallo");
+      position++;
     }
 
 
