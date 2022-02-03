@@ -1,4 +1,4 @@
-image: /home/alejandro/catkin_ws/src/mopad_navigation/maps/map.pgm
+image: /home/mopad/catkin_ws/src/mopad_navigation/maps/map.pgm
 resolution: 0.025000
 origin: [-10.262500, -10.262500, 0.000000]
 negate: 0

@@ -61,7 +61,7 @@ select fav in "${scripts[@]}"; do
 	    	./navigation_rviz.sh
 	    fi
  	    ;;
-	"Navegación(ruta)")	#Script de navegación mediante ruta+PTU
+	"Navegación(ruta)")	#Script de navegación mediante ruta+PTU. Incluye toma de datos.
 	    pkill roslaunch
             echo "Iniciando proceso de navegación..."
 	    if [ $var = 1 ];

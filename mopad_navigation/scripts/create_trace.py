@@ -9,9 +9,8 @@ rospy.init_node('talker', anonymous=True)
 
 origen = [0, 0, 0]
 grid_size = 0
-#path_yaml = '/home/rafaelm/Desktop/mapa_test.yaml'
-#path_yaml = '/home/rafaelm/own_ws/src/uvone_robot/uvone_robot_navigation/maps/octomap_grid.yaml'
-path_yaml = rospy.get_param('~yaml/path', '/home/alejandro/catkin_ws/src/mopad_navigation/maps/')
+
+path_yaml = rospy.get_param('~yaml/path', '/home/mopad/catkin_ws/src/mopad_navigation/maps/')
 file_yaml = rospy.get_param('~yaml/filename','map.yaml')
 route_path = rospy.get_param('~route/path','map.yaml')
 route_filename = rospy.get_param('~route/filename','map.yaml')
@@ -55,7 +54,7 @@ def on_click(event, x, y, p1, p2):
         final_point = (int(init_point[0] + vector[0]), int(init_point[1] + vector[1]))
 
 
-        f.write("%.4f  \t%.4f  \t%.4f\n" % (init_point_off[0], init_point_off[1], math.atan2(vector[1],vector[0])))
+        f.write("%.4f  \t%.4f  \t%.4f\n" % (init_point_off[0], init_point_off[1], -math.atan2(vector[1],vector[0])))
 
 
         cv2.arrowedLine(img, init_point, final_point, (100, 200, 0), 5)
