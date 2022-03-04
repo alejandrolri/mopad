@@ -1,3 +1,4 @@
+
 #include <ros/ros.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
@@ -12,6 +13,8 @@
 #include <sensor_msgs/JointState.h>
 
 #include <sys/stat.h>
+
+#include <tf/transform_listener.h>
 
 
 
@@ -44,91 +47,80 @@ void ptu(double pan, double tilt, ros::Publisher state_pub)
 	}
 }
 
-string BLK(bool mode,string density,string emissivity_mode)
+void BLK(string modo,string densidad,int tomas,int position,double x,double y,double yaw,double emisividad,string color)
 {
+	ROS_INFO("BLK");
 	string route, scan, emissivity;
         
-	if (mode==false) {//OnlyPointCloud
-		route = "adquisitionOnlyPointCloud";
-		scan = "DownloadPC";
-	}
-	else{		//PCandIR
-		route = "adquisitionPCAndIR";
-		scan = "DownloadPCAndIR";		
-		emissivity=emissivity_mode;
+	if (modo=="NubedePuntos") {
+		if (color=="RGB"){
+		route = "adquisitionWithColor/DownloadPCWithColor";
+		}
+		else{
+			route = "adquisitionOnlyPointCloud/DownloadPC";
+		}
+	}	
+	else{		
+		emissivity= to_string(emisividad);
+		if (color=="RGB"){
+			route = "adquisitionWithColorAndIR/DownloadPCWithColorAndIR";
+		}
+		else{
+			route = "adquisitionPCAndIR/DownloadPCAndIR";
+		}	
+				
 	}	
 
-	//string param = "cd ~ && export DISPLAY=:0.0 && ./blk/"+route+" "+density+" "+emissivity;
-	string param_ssh = "ssh mopad@10.42.0.1 \"cd blk/"+route+" && export DISPLAY=:0.0 && ./"+scan+" "+density+" "+emissivity+" \"";
-	//cout<<param_ssh<<endl;
-	int n_ssh = param_ssh.length();
-	char command_ssh[n_ssh+1];
-	strcpy(command_ssh, param_ssh.c_str()); //system solo acepta char
+
+	//Crea la carpeta de una posición
+	string dir="/home/mopad/Escritorio/Nubes/position"+to_string(position);
+	int n_dir = dir.length(); char path[n_dir+1]; strcpy(path, dir.c_str()); 
+       	mkdir(path,0777);
+
+	//Guardar posición y orientación
+	ofstream myfile;
+	myfile.open(dir+"/posicion.txt");
+	myfile << x << "\t" << y  <<  "\t" << yaw << endl;
+	myfile.close();
 	
-	/*string param_pscp = "pscp -pw mopad -r mopad@10.42.0.1:/home/mopad/blk/"+route+"/data /home/mopad/Escritorio";
-	int n_pscp = param_pscp.length();
-	char command_pscp[n_pscp+1];
-	strcpy(command_pscp, param_pscp.c_str());
-
-	string param_rm = "ssh mopad@10.42.0.1 rm /home/mopad/blk/"+route+"/data/*";
-	int n_rm = param_rm.length();
-	char command_rm[n_rm+1];
-	strcpy(command_rm, param_rm.c_str()); */	
-
-        system(command_ssh);
-	//system(command_pscp);
-	//system(command_rm);
-
-	return route;
-	
-	/*system(command);
-	system("cp -r /home/mopad/data /home/mopad/Escritorio"); ///media/windows/Users/mopad/Desktop  
-	system("cp /home/mopad/catkin_ws/src/mopad_navigation/paths/ruta.txt /home/mopad/Escritorio/data"); 	
-	system("rm /home/mopad/data/*");*/
+	for(int i=1; i<=tomas;i++){
+		string dir_t= dir+"/toma"+to_string(i);
+		int n_dir_t = dir_t.length(); char path_t[n_dir_t+1]; strcpy(path_t, dir_t.c_str());
+		mkdir(path_t,0777);
+		
+		//Ejecuta BLK en la carpeta anterior
+		string param = "cd "+dir_t+" && export DISPLAY=:0.0 && /home/mopad/blk/"+route+" "+densidad+" "+emissivity;
+		int n = param.length(); char command[n+1]; strcpy(command, param.c_str()); //system solo acepta char	
+		system(command);
 	}
 
-void send(string route,int position)
-{
-	string param_dir = "/home/mopad/Escritorio/data/position"+to_string(position);
-	int n_dir = param_dir.length();
-	char command_dir[n_dir+1];
-	strcpy(command_dir, param_dir.c_str());
-	
-	string param_pscp = "pscp -pw mopad -r mopad@10.42.0.1:/home/mopad/blk/"+route+"/data/* /home/mopad/Escritorio/data/position"+to_string(position);
-	int n_pscp = param_pscp.length();
-	char command_pscp[n_pscp+1];
-	strcpy(command_pscp, param_pscp.c_str());
-
-	string param_rm = "ssh mopad@10.42.0.1 rm /home/mopad/blk/"+route+"/data/*";
-	int n_rm = param_rm.length();
-	char command_rm[n_rm+1];
-	strcpy(command_rm, param_rm.c_str());
-
-	mkdir(command_dir,0777);
-	system(command_pscp);
-	system(command_rm);
 }
+
+
 
 
 int main(int argc, char** argv){
   
   int position = 0;
+  int tomas;
   double x, y, theta;
-  bool scan_mode;
-  string density_mode, emissivity_mode, route;
+  double x_r, y_r, yaw, emisividad;
+  string modo, densidad,color;
 
   ros::init(argc, argv, "navigation_goals");
   ros::NodeHandle nh("~"); 
   ros::Publisher state_pub = nh.advertise<asr_flir_ptu_driver::State>("/asr_flir_ptu_driver/state_cmd", 1);	
 
+
 //Obtener los parámetros para el escaneado
-  nh.getParam("/scan_mode", scan_mode);
-  nh.getParam("/density_mode", density_mode);
-  nh.getParam("/emissivity_mode", emissivity_mode);
+  //nh.getParam("/scan_mode", scan_mode);
+  //nh.getParam("/density_mode", density_mode);
+  //nh.getParam("/emissivity_mode", emissivity_mode);
  
+//...........................................
+  tf::TransformListener listener;
 
   tf2::Quaternion myQ;
-
 
   //tell the action client that we want to spin a thread by default
   MoveBaseClient ac("move_base", true);
@@ -144,9 +136,10 @@ int main(int argc, char** argv){
   myfile.open("/home/mopad/catkin_ws/src/mopad_navigation/paths/ruta.txt");
   if (myfile.is_open())
   { 
-    while ( myfile >> x >> y >> theta)
+    while ( myfile >> x >> y >> theta >> modo >> tomas >> densidad >> emisividad >> color)
     {
-    cout << x <<"\t" << y <<"\t" << theta << endl;
+    cout << x << "\t" << y  <<  "\t" << theta << endl;
+    cout << modo <<"\t" << tomas <<"\t" << densidad  <<"\t" << emisividad <<"\t" << color  << endl;
 
     move_base_msgs::MoveBaseGoal goal;
     goal.target_pose.header.frame_id = "map";
@@ -170,8 +163,25 @@ int main(int argc, char** argv){
     if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
       	ROS_INFO("Ha llegado correctamente");
-	route = BLK(scan_mode,density_mode,emissivity_mode); //Devuelve la ruta para la funcion send
-	send(route,position);
+	
+	//GUARDA LA POSICIÓN
+	tf::StampedTransform transform;
+	try{
+	listener.lookupTransform("/map","/base_footprint",ros::Time(0),transform);
+	//ROS_INFO("x=%f, y=%f",transform.getOrigin().x(),transform.getOrigin().y());
+	x_r = transform.getOrigin().x();
+	y_r = transform.getOrigin().y();
+	tf::Quaternion q = transform.getRotation();
+	yaw = tf::getYaw(q);
+}
+
+	catch(tf::TransformException ex){
+	ROS_ERROR("Error tf");
+}
+
+	if(modo!="home"){
+		BLK(modo,densidad,tomas,position,x_r,y_r,yaw,emisividad,color);
+	}
 
 	/*ptu(-80,0,state_pub);
 	ptu(-80,24,state_pub);
@@ -189,14 +199,16 @@ int main(int argc, char** argv){
       ROS_INFO("Ha habido un fallo");
     }
 
-
-
     myfile.close();
   }
 
   else cout << "Unable to open file"; 
 
-  system("cp /home/mopad/catkin_ws/src/mopad_navigation/paths/ruta.txt /home/mopad/Escritorio/data");
+	//ENVIAR
+ 	//system("scp -r /home/mopad/Escritorio/Nubes mopad@10.42.0.82:/home/mopad/Escritorio/data/");
+	system("pscp -pw mopad -r /home/mopad/Escritorio/Nubes mopad@10.42.0.82:C:/Users/mopad/Desktop/BLK");
 
+	//BORRAR
+	system("rm -r /home/mopad/Escritorio/Nubes/*");
   return 0;
 }
