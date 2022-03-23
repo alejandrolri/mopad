@@ -2,6 +2,10 @@
 #include "asr_flir_ptu_driver/State.h"
 #include <sensor_msgs/JointState.h>
 
+
+using namespace std;
+
+
 sensor_msgs::JointState createJointCommand(double pan, double tilt, double panSpeed, double tiltSpeed)
 {
 	sensor_msgs::JointState joint_state;
@@ -33,13 +37,17 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 	ros::Publisher state_pub = nh.advertise<asr_flir_ptu_driver::State>("/asr_flir_ptu_driver/state_cmd", 1);
 
-	ptu(-80,0,state_pub);
-	ptu(-80,24,state_pub);
+	ptu(-90,0,state_pub);
+	/*ptu(-90,-40,state_pub);
 	ros::Duration(10).sleep();
        //BLK
-       	ptu(80,24,state_pub);
+	ptu(-90,0,state_pub);
+	ptu(90,0,state_pub);
+       	ptu(90,-40,state_pub);
 	ros::Duration(10).sleep();
        //BLK
-	ptu(80,0,state_pub);
-       	ptu(0,0,state_pub);	
-}
+	ptu(90,0,state_pub);*/
+	ros::Duration(1).sleep();
+     	ptu(0,0,state_pub);	
+} 
+
