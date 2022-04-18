@@ -52,7 +52,7 @@ void ptu(double pan, double tilt, ros::Publisher state_pub)
 	}
 }
 
-//Comprueba los archivos generados por el BLK y detecta si ha habido algún fallo. Comprueba que se ha lanzado BLK.
+//Comprueba los archivos generados por el BLK y detecta si ha habido algún fallo. 
 bool fallo(string direccion)
 {
 	direccion = direccion+"/data";
@@ -66,7 +66,6 @@ bool fallo(string direccion)
 	}
 	else	//Existe el directorio data. Comprobar que están todos los ficheros.
 	{
-		ROS_INFO("Existe data");
 		string param = "cd "+direccion+" && ls | wc -l >> /tmp/text.txt";
 		char *comando = &param[0];
 		system(comando);
@@ -76,10 +75,16 @@ bool fallo(string direccion)
 		myfile >> x;
 		myfile.close();
 		remove("/tmp/text.txt");
-		if(x>0)	
-			return false;	
+		if(x==1 || x==52)
+		{
+			ROS_INFO("Se ha realizado el escaneado de forma correcta");	
+			return true;	
+		}
 		else
-			return true;
+		{
+			ROS_INFO("Ha habido un problema");
+			return false;
+		}
 	}
 }
 
@@ -108,7 +113,6 @@ bool BLK(string modo,string densidad,int tomas,int posicion,double x,double y,do
 
 	//Crea la carpeta de una posición
 	string dir="/home/mopad/Escritorio/Nubes/posicion"+to_string(posicion);
-	//int n_dir = dir.length(); char path[n_dir+1]; strcpy(path, dir.c_str());
 	char *path = &dir[0];
        	mkdir(path,0777);
 
@@ -123,9 +127,9 @@ bool BLK(string modo,string densidad,int tomas,int posicion,double x,double y,do
 	{
 		ROS_INFO("PTU");
 		//INCLINADO 45
-		ROS_INFO("Toma 40 grados");
+		ROS_INFO("Toma 45 grados");
 		ptu(-90,0,state_pub);
-		ptu(-90,-40,state_pub);
+		ptu(-90,-45,state_pub);
 
 		string dir_i1 = dir+"/inclinado1";
 		char *path_i1 = &dir_i1[0];
@@ -181,9 +185,9 @@ bool BLK(string modo,string densidad,int tomas,int posicion,double x,double y,do
 		
 		
 		//INCLINADO -45
-		ROS_INFO("Toma -40");
+		ROS_INFO("Toma -45");
 		ptu(90,0,state_pub);
-		ptu(90,-40,state_pub);
+		ptu(90,-45,state_pub);
 
 
 		string dir_i2 = dir+"/inclinado2";
@@ -259,6 +263,7 @@ int main(int argc, char** argv){
 
 	tf2::Quaternion myQ;
 
+
 	//tell the action client that we want to spin a thread by default
 	MoveBaseClient ac("move_base", true);
 
@@ -313,7 +318,6 @@ int main(int argc, char** argv){
 					tf::StampedTransform transform;
 					try{
 						listener.lookupTransform("/map","/base_footprint",ros::Time(0),transform);
-						//ROS_INFO("x=%f, y=%f",transform.getOrigin().x(),transform.getOrigin().y());
 						x_r = transform.getOrigin().x();
 						y_r = transform.getOrigin().y();
 						tf::Quaternion q = transform.getRotation();
@@ -323,21 +327,23 @@ int main(int argc, char** argv){
 						ROS_ERROR("Error tf");
 					}
 
-					//if(modo!="home")
-					//{
-						ros::Duration(1).sleep();		//Pausa entre la llegada al destino y el lanzamiento del escáner
-						status = BLK(modo,densidad,tomas,posicion,x_r,y_r,yaw,emisividad,color,state_pub,pantilt);
-						if(!status)
-						{
-							ofstream pos_fallo;
-					  		pos_fallo.open("/home/mopad/Escritorio/Nubes/fallo.txt");
-							pos_fallo << posicion << endl;
-							pos_fallo.close();
-						}
-					//}
+		
+					ros::Duration(1).sleep();		//Pausa entre la llegada al destino y el lanzamiento del escáner
+					status = BLK(modo,densidad,tomas,posicion,x_r,y_r,yaw,emisividad,color,state_pub,pantilt);
+					if(!status)
+					{
+						ROS_INFO("fallo");
+						ofstream pos_fallo;
+					  	pos_fallo.open("/home/mopad/Escritorio/Nubes/fallo.txt");
+						pos_fallo << posicion << endl;
+						pos_fallo.close();
+					}
 			    	}
 			   	 else
+				{
 			    	 	ROS_INFO("Ha habido un fallo");
+					status = false;
+				}
 			}
 		}
 		myfile.close();
@@ -373,6 +379,6 @@ int main(int argc, char** argv){
 	//Terminar nodos de move_base.launch
 	system("rosnode kill move_base");
 	system("rosnode kill navigation_velocity_smoother");
-	system("rosnode kill kobuki_safety_controller");
+	system("rosnode kill kobuki_safety_controller"); 
   	return 0;
 }
