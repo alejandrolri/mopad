@@ -15,6 +15,7 @@ dirFlags = [files.isdir];
 subFolders = files(dirFlags);
 subFolderNames = {subFolders(3:end).name};
 
+disp('Procesando...')
 for j = 1 : length(subFolderNames)
     Directorio_principal = fullfile(Directorio,subFolderNames{j});
     if length(dir(Directorio_principal))==6

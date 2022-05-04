@@ -150,6 +150,24 @@ while sigue=='s'
     ci4t.HorizontalAlignment = 'left';
     ci4t.Position=[pos_x pos_y(ii) anchura altura]; % Posicion del boton
 
+    %% 5
+    ii=ii+1;
+    % Posicion 5. Boton
+    ci5 = uicontrol;
+    ci5.String = '5)';
+    ci5.BackgroundColor=Color_fondo_boton;
+    ci5.FontWeight= 'bold';
+    ci5.Position=[pos_x_boton pos_y_boton(ii) anchura_boton altura_boton]; % Posicion del boton
+    ci5.Callback = @pushbuttonGet_boton_i5; % Se queda residente
+
+    % Texto
+    ci5t = uicontrol;
+    ci5t.Style= 'text';
+    ci5t.BackgroundColor=Color_fondo_texto;
+    ci5t.String = '- Visualización de nube acumulada';
+    ci5t.HorizontalAlignment = 'left';
+    ci5t.Position=[pos_x pos_y(ii) anchura altura]; % Posicion del boton
+
     %% =================================================================
     % Acabar visualización
     c100 = uicontrol;
@@ -194,11 +212,22 @@ while sigue=='s'
             disp('Fin de proceso 3')
             disp('=======================================')
             disp(' ')
+
         case 4;     clc
             disp('==================4====================')
             disp(' ')
             disp('4) Mostrar posiones y orientaciones en el mapa')
             Muestra_puntos_mapa
+            cd(Directorio_main_datos)
+            disp('Fin de proceso 4')
+            disp('=======================================')
+            disp(' ')
+
+        case 5;     clc
+            disp('==================4====================')
+            disp(' ')
+            disp('5) Visualización de nube acumulada')
+            ver_nube_acumulada
             cd(Directorio_main_datos)
             disp('Fin de proceso 4')
             disp('=======================================')
@@ -236,6 +265,12 @@ close all
 % Boton 4
     function pushbuttonGet_boton_i4(~,~)
         opcion=4;
+        para=0;
+    end
+
+% Boton 5
+    function pushbuttonGet_boton_i5(~,~)
+        opcion=5;
         para=0;
     end
 
