@@ -134,7 +134,7 @@ classdef app_mopad_ver2 < matlab.apps.AppBase
             figure; imshow(app.mapa)
             hold on
             
-            fileID = fopen('C:\Users\mopad\pruebas\ruta.txt','w');
+            fileID = fopen('C:\Users\mopad\pruebas\ruta.txt','w'); 
 
             %Incluye las coordenadas de HOME
             if ~isempty(app.home)
@@ -190,7 +190,8 @@ classdef app_mopad_ver2 < matlab.apps.AppBase
             fig = msgbox('Asegúrese de haber encendido el BLK', 'Aviso','warn');
             uiwait(fig)
             %Inicia los nodos de navegación/escaneado
-            ssh2_simple_command('10.42.0.1','mopad','mopad','roslaunch mopad_navigation move_base.launch >/dev/null 2>1 &');
+            %ssh2_simple_command('10.42.0.1','mopad','mopad','roslaunch mopad_navigation move_base.launch >/dev/null 2>1 &');
+            system('ssh -t mopad@10.42.0.1 roslaunch mopad_navigation move_base.launch&')
             pause(3)
             %ssh2_simple_command('10.42.0.1','mopad','mopad','roslaunch mopad_navigation navigation.launch >/dev/null 2>1 &');
             %Para poder ver la salida del terminal
@@ -249,6 +250,7 @@ classdef app_mopad_ver2 < matlab.apps.AppBase
             %system('ssh -t mopad@10.42.0.1 sudo chmod 666 /dev/ttyUSB0 &')
             fig = msgbox('Asegúrese de haber encendido el pan-tilt', 'Aviso','warn');
             uiwait(fig)
+            %system('ssh -t mopad@10.42.0.1 roslaunch asr_flir_ptu_driver ptu_left.launch')
             ssh2_simple_command('10.42.0.1','mopad','mopad','roslaunch asr_flir_ptu_driver ptu_left.launch >/dev/null 2>1 &');
         end
 
