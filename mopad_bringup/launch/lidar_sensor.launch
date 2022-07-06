@@ -9,10 +9,10 @@
     <param name="scan_mode" value="Standard"/>
 
 
-    <remap from="/scan" to="/mopad/laser/scan" />
+     <remap from="/scan" to="/mopad/laser/scan" /> 
 
   </node>
 
-  <include file="$(find mopad_bringup)/launch/scan_filter.launch" />
+   <include file="$(find mopad_bringup)/launch/scan_filter.launch" /> 
   
 </launch>
