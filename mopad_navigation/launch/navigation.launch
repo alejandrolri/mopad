@@ -1,16 +1,11 @@
 <launch> 
-  <!-- 
-      termo para seleccionar entre Nube de puntos solo(false) o Nube de puntos+térmico(true)
-      density para elegir la densidad de la nube de puntos
-      emissivity para elegir la emisividad (solo para nube de puntos+térmico)
-  -->
-    <arg name="termo"  default="false" />  <!-- Cambiar después de las pruebas. PONER EL ESCANEADO TERMOGRAFICO POR DEFECTO -->
-    <arg name="density" default="low" />
-    <arg name="emissivity" default="0.95" />
-    <param name="scan_mode" type="bool" value="$(arg termo)" />
-    <param name="density_mode" type="string" value="$(arg density)" />
-    <param name="emissivity_mode" type="string" value="$(arg emissivity)" />
+  
+    <arg name="dock"  default="false" /> 
+    <param name="activate_dock" type="bool" value="$(arg dock)" />
+
+    <include file="$(find kobuki_auto_docking)/launch/minimal.launch" if="$(arg dock)"/>
 
     <node name="navigation_goals" pkg="mopad_navigation" type="navigation" output="screen">
     </node>
+
 </launch>
