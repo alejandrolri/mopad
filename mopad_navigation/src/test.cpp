@@ -1,10 +1,11 @@
 // NODO PARA NAVEGACIÓN Y TOMA DE DATOS DE MOPAD 2
-// versión 3: incluye movimiento del pan-tilt y detección de fallos de BLK
+// versión 5: auto docking incluido
 
 
 #include <ros/ros.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
+#include <kobuki_msgs/AutoDockingAction.h>
 
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
@@ -57,11 +58,11 @@ bool fallo(string direccion)
 {
 	direccion = direccion+"/data";
 	char *path = &direccion[0];
-		
+	ros::Duration(0.5).sleep();	
+
 	struct stat buffer;
 	if (stat(path,&buffer))	//No se ha creado el directorio data.
 	{	
-		ROS_INFO("No existe data");
 		return true;
 	}
 	else	//Existe el directorio data. Comprobar que están todos los ficheros.
@@ -78,16 +79,31 @@ bool fallo(string direccion)
 		if(x==1 || x==52)
 		{
 			ROS_INFO("Se ha realizado el escaneado de forma correcta");	
-			return true;	
+			return false;	
 		}
 		else
 		{
-			ROS_INFO("Ha habido un problema");
-			return false;
+			remove(path);
+			ROS_INFO("Ha habido un problema.Faltan archivos");
+			return true;
 		}
 	}
 }
 
+void bateria(){
+	system("/home/mopad/blk/BatteryLevel/GetDeviceInfoSample >> /tmp/battery.txt");	//Comprobación de batería BLK
+	ifstream myfile;
+	myfile.open("/tmp/battery.txt");
+	int x;
+	myfile >> x;
+	cout << "NIVEL DE BATERÍA BLK: "<< x << endl;
+	if (x<10){
+		cout << "Cambie la batería del escáner" << endl;	
+		ros::Duration(120).sleep();
+	}
+	myfile.close();
+	remove("/tmp/battery.txt");
+}
 
 bool BLK(string modo,string densidad,int tomas,int posicion,double x,double y,double yaw,double emisividad,string color, ros::Publisher state_pub, string pantilt)
 {
@@ -114,7 +130,7 @@ bool BLK(string modo,string densidad,int tomas,int posicion,double x,double y,do
 	//Crea la carpeta de una posición
 	string dir="/home/mopad/Escritorio/Nubes/posicion"+to_string(posicion);
 	char *path = &dir[0];
-       	mkdir(path,0777);
+    mkdir(path,0777);
 
 	//Guardar posición y orientación
 	ofstream myfile;
@@ -136,21 +152,25 @@ bool BLK(string modo,string densidad,int tomas,int posicion,double x,double y,do
 		mkdir(path_i1,0777);
 		for(int i=1; i<=tomas;i++)
 		{
+			int control = 0;
 			string dir_t= dir_i1+"/toma"+to_string(i);
 			char *path_t = &dir_t[0];
 			mkdir(path_t,0777);
 			
 			//Ejecuta BLK en la carpeta anterior
 			string param = "cd "+dir_t+" && export DISPLAY=:0.0 && /home/mopad/blk/"+route+" "+densidad+" "+emissivity;
-			char *command = &param[0];	
-			system(command);
-			if (fallo(dir_t))
+			char *command = &param[0];
+			while (fallo(dir_t) && control < 3){	
+				control++;
+				system(command);
+			}
+			/*if (fallo(dir_t))
 			{
 				ROS_INFO("FALLO BLK");
 				ptu(-90,0,state_pub);
 				ptu(0,0,state_pub);
 				return false;
-			}
+			}*/
 		}
 
 
@@ -164,6 +184,7 @@ bool BLK(string modo,string densidad,int tomas,int posicion,double x,double y,do
 		mkdir(path_v,0777);
 		for(int i=1; i<=tomas;i++)
 		{
+			int control = 0;
 			string dir_t= dir_v+"/toma"+to_string(i);
 			char *path_t = &dir_t[0];
 			mkdir(path_t,0777);
@@ -171,18 +192,12 @@ bool BLK(string modo,string densidad,int tomas,int posicion,double x,double y,do
 			//Ejecuta BLK en la carpeta anterior
 			string param = "cd "+dir_t+" && export DISPLAY=:0.0 && /home/mopad/blk/"+route+" "+densidad+" "+emissivity;
 			char *command = &param[0];	
-			system(command);
-			
-			if (fallo(dir_t))
-			{
-				ROS_INFO("FALLO BLK");
-				return false;
+			while (fallo(dir_t) && control < 3){	
+				control++;
+				system(command);
 			}
-
 		}	
 
-		
-		
 		
 		//INCLINADO -45
 		ROS_INFO("Toma -45");
@@ -195,6 +210,7 @@ bool BLK(string modo,string densidad,int tomas,int posicion,double x,double y,do
 		mkdir(path_i2,0777);
 		for(int i=1; i<=tomas;i++)
 		{
+			int control = 0;
 			string dir_t= dir_i2+"/toma"+to_string(i);
 			char *path_t = &dir_t[0];
 			mkdir(path_t,0777);
@@ -202,13 +218,9 @@ bool BLK(string modo,string densidad,int tomas,int posicion,double x,double y,do
 			//Ejecuta BLK en la carpeta anterior
 			string param = "cd "+dir_t+" && export DISPLAY=:0.0 && /home/mopad/blk/"+route+" "+densidad+" "+emissivity;
 			char *command = &param[0];	
-			system(command);
-			if (fallo(dir_t))
-			{
-				ROS_INFO("FALLO BLK");
-				ptu(90,0,state_pub);
-				ptu(0,0,state_pub);
-				return false;
+			while (fallo(dir_t) && control < 3){	
+				control++;
+				system(command);
 			}
 		}	
 
@@ -219,6 +231,7 @@ bool BLK(string modo,string densidad,int tomas,int posicion,double x,double y,do
 	{
 		for(int i=1; i<=tomas;i++)
 		{
+			int control = 0;
 			string dir_t= dir+"/toma"+to_string(i);
 			char *path_t = &dir_t[0];
 			mkdir(path_t,0777);
@@ -226,11 +239,9 @@ bool BLK(string modo,string densidad,int tomas,int posicion,double x,double y,do
 			//Ejecuta BLK en la carpeta anterior
 			string param = "cd "+dir_t+" && export DISPLAY=:0.0 && /home/mopad/blk/"+route+" "+densidad+" "+emissivity;
 			char *command = &param[0];	
-			system(command);
-			if (fallo(dir_t))
-			{
-				ROS_INFO("FALLO BLK");
-				return false;
+			while (fallo(dir_t) && control < 3){	
+				control++;
+				system(command);
 			}
 		}	
 	}
@@ -238,17 +249,33 @@ bool BLK(string modo,string densidad,int tomas,int posicion,double x,double y,do
 	return true;
 }
 
-
+/*void docking(){
+	//Cliente
+	actionlib::SimpleActionClient<kobuki_msgs::AutoDockingAction> docking_ac("dock_drive_action",true);
+	docking_ac.waitForServer();
+	//Goal
+	kobuki_msgs::AutoDockingGoal goal_docking;
+	
+	actionlib::SimpleClientGoalState dock_state = actionlib::SimpleClientGoalState::LOST;
+	
+	docking_ac.sendGoal(goal_docking);
+	
+	while (!docking_ac.waitForResult(ros::Duration(3))){
+		dock_state = docking_ac.getState();
+		ROS_INFO("%s",dock_state.toString().c_str());
+	}
+} */
 	
 
 int main(int argc, char** argv){
-  
+	
 	int posicion,tomas;
 	double x, y, theta;
 	double x_r, y_r, yaw, emisividad;
 	string modo, densidad, color, pantilt;
 	bool status = true;
 
+	
 
 	//Posición de HOME	
 	double x_home, y_home, yaw_home;
@@ -258,7 +285,9 @@ int main(int argc, char** argv){
 	ros::NodeHandle nh("~"); 
 	ros::Publisher state_pub = nh.advertise<asr_flir_ptu_driver::State>("/asr_flir_ptu_driver/state_cmd", 1);	
 	 
-
+	 bool docking;
+	 nh.getParam("activate_dock", docking);
+     
 	tf::TransformListener listener;
 
 	tf2::Quaternion myQ;
@@ -267,9 +296,9 @@ int main(int argc, char** argv){
 	//tell the action client that we want to spin a thread by default
 	MoveBaseClient ac("move_base", true);
 
-
+	
+	
 	//wait for the action server to come up
-
 	while(!ac.waitForServer(ros::Duration(5.0))){
 		ROS_INFO("Waiting for the move_base action server to come up");
 	}
@@ -289,9 +318,6 @@ int main(int argc, char** argv){
 			}
 			else
 			{
-				cout << x << "\t" << y  <<  "\t" << theta << endl;
-			    	cout << modo <<"\t" << tomas <<"\t" << densidad  <<"\t" << emisividad <<"\t" << color <<"\t" << pantilt  << endl;
-
 				move_base_msgs::MoveBaseGoal goal;
 				goal.target_pose.header.frame_id = "map";
 				goal.target_pose.header.stamp = ros::Time::now();
@@ -329,20 +355,23 @@ int main(int argc, char** argv){
 
 		
 					ros::Duration(1).sleep();		//Pausa entre la llegada al destino y el lanzamiento del escáner
+					//
 					status = BLK(modo,densidad,tomas,posicion,x_r,y_r,yaw,emisividad,color,state_pub,pantilt);
-					if(!status)
-					{
-						ROS_INFO("fallo");
-						ofstream pos_fallo;
-					  	pos_fallo.open("/home/mopad/Escritorio/Nubes/fallo.txt");
-						pos_fallo << posicion << endl;
-						pos_fallo.close();
-					}
+					bateria();
 			    	}
-			   	 else
+			   	else
 				{
 			    	 	ROS_INFO("Ha habido un fallo");
-					status = false;
+					//status = false;
+				}
+
+				if(!status)
+				{
+					ROS_INFO("fallo");
+					ofstream pos_fallo;
+				 	pos_fallo.open("/home/mopad/Escritorio/Nubes/fallo.txt");
+					pos_fallo << posicion << endl;
+					pos_fallo.close();
 				}
 			}
 		}
@@ -365,6 +394,25 @@ int main(int argc, char** argv){
 			ac.sendGoal(goal);
 
 			ac.waitForResult();
+			
+			if (docking){
+				// DOCKING
+				ROS_INFO("DOCK");
+				//Cliente
+				actionlib::SimpleActionClient<kobuki_msgs::AutoDockingAction> docking_ac("dock_drive_action",true);
+				docking_ac.waitForServer();
+				//Goal
+				kobuki_msgs::AutoDockingGoal goal_docking;
+	
+				actionlib::SimpleClientGoalState dock_state = actionlib::SimpleClientGoalState::LOST;
+	
+				docking_ac.sendGoal(goal_docking);
+	
+				while (!docking_ac.waitForResult(ros::Duration(3))){
+				dock_state = docking_ac.getState();
+				ROS_INFO("%s",dock_state.toString().c_str());
+				}
+			}
 		}
 	}
 
@@ -380,5 +428,11 @@ int main(int argc, char** argv){
 	system("rosnode kill move_base");
 	system("rosnode kill navigation_velocity_smoother");
 	system("rosnode kill kobuki_safety_controller"); 
+	// Terminar nodo docking
+	system("rosnode kill dock_drive"); 
+	
+	//Flag de finalización
+	system("pscp -pw mopad /home/mopad/Escritorio/flag.txt mopad@10.42.0.82:C:/Users/mopad/Desktop");
+
   	return 0;
 }
