@@ -1,6 +1,7 @@
 # mopad
 Incluye los paquetes necesarios para la puesta en funcionamiento del mopad 2
 
+#FALTA GMAPPING 
 
 Se usará ROS Melodic para la realización de este proyecto.
 
